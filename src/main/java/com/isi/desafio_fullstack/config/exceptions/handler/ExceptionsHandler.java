@@ -19,9 +19,6 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class ExceptionsHandler {
 
-    private ApiError formatError;
-
-
     @ExceptionHandler(EntityExistsException.class)
     public ResponseEntity<ApiError> handlerErrorIllegalArgumentException(EntityExistsException exception){
 
