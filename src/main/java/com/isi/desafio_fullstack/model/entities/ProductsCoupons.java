@@ -1,9 +1,9 @@
 package com.isi.desafio_fullstack.model.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.sql.Timestamp;
 import java.time.ZoneId;
@@ -12,7 +12,6 @@ import java.time.ZonedDateTime;
 
 @Entity
 @NoArgsConstructor
-@AllArgsConstructor
 @Getter
 public class ProductsCoupons {
 
@@ -31,10 +30,18 @@ public class ProductsCoupons {
 
     private Timestamp appliedAt;
 
-    private Timestamp removedAt;
+    @Setter
+    private Timestamp removedAt = null;
 
 
-    public void setAppliedAt(Timestamp appliedAt){
+    public ProductsCoupons(Products productId, Coupons couponId) {
+        this.productId = productId;
+        this.couponId = couponId;
+    }
+
+
+    @PrePersist
+    public void prePersist(){
         this.appliedAt = Timestamp.from(ZonedDateTime.now(ZoneId.of("America/Sao_Paulo")).toInstant());
     }
 

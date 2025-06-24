@@ -1,22 +1,19 @@
 package com.isi.desafio_fullstack.model.entities;
 
+import com.isi.desafio_fullstack.utils.UtilsCodes;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.validator.constraints.Range;
-import org.springframework.format.annotation.DateTimeFormat;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.TimeZone;
 
 
 @Entity
 @NoArgsConstructor
-@AllArgsConstructor
 @Getter
 public class Products {
 
@@ -28,44 +25,58 @@ public class Products {
     @Column(unique = true)
     @Size(min = 3, max = 100)
     @NotBlank
+    @Setter
     private String name;
 
     @Size(max = 300)
     private String description;
 
-    @Digits(integer = 6, fraction = 2)
+    @Column(precision = 9, scale = 2)
     @NotNull
+    @Setter
     private BigDecimal price;
+
+    @Column(precision = 9, scale = 2)
+    @Setter
+    private BigDecimal finalPrice;
 
     @Min(0)
     @Max(999999)
     @NotNull
     private Integer stock;
 
-    @NotNull
+    @Setter
+    private Boolean isOutOfStock;
+
+    @Setter
+    private Boolean isActive = true;
+
     private LocalDateTime createdAt;
 
+    @Setter
     private LocalDateTime updatedAt;
 
+    @Setter
     private LocalDateTime deletedAt;
 
     @OneToMany(mappedBy = "productId")
     private List<ProductsCoupons> discount;
 
 
+    public Products(String name, String description, BigDecimal price, Integer stock) {
+
+        this.name = UtilsCodes.formatName(name);
+        this.description = description;
+        this.price = price.abs();
+        this.stock = stock;
+        this.isOutOfStock = stock == 0;
+
+    }
+
+
     @PrePersist
     private void prePersist(){
-        this.createdAt = LocalDateTime.now(TimeZone.getTimeZone("America/Sao_Paulo").toZoneId());
-    }
-
-    @PreUpdate
-    private void preUpdate(){
-        this.updatedAt = LocalDateTime.now(TimeZone.getTimeZone("America/Sao_Paulo").toZoneId());
-    }
-
-    @PreRemove
-    private void preRemove(){
-        this.deletedAt = LocalDateTime.now(TimeZone.getTimeZone("America/Sao_Paulo").toZoneId());
+        this.createdAt = UtilsCodes.dateToday();
     }
 
 }
